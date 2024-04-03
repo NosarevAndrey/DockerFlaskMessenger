@@ -1,0 +1,134 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  min-height: 100vh;
+  background-color: #0056b3;
+}
+.sidebar {
+  width: 16%;
+  background-color: #f4f4f4;
+  border-right: 3px solid rgb(0, 44, 139);
+  padding: 0;
+}
+.sidebar h2 {
+  padding: 0 20px 0 20px;
+  font-size: 1.4rem;
+}
+.chat-list {
+  display: flex;
+  flex-direction: column;
+}
+.chat-list a {
+  padding: 8px;
+  background-color: #afd2f7;
+  color: black;
+  text-decoration: none;
+}
+.chat-list a:nth-child(2n) {
+  padding: 8px;
+  background-color: #8ec0f5;
+}
+.chat-list .current {
+  z-index: 1;
+  outline: rgb(165, 246, 255) solid 4px;
+  border-radius: 4px;
+}
+.chat {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+.chat-header {
+  background-color: rgb(0, 44, 139);
+  padding: 4px 16px;
+  margin: 0;
+}
+.chat-content {
+  padding: 16px;
+  flex: 1;
+}
+.chat-name {
+  text-align: right;
+  font-size: 1.4rem;
+  color: #fff;
+}
+textarea {
+  /* width: calc(100% - 10px); */
+  width: 100%;
+  height: 50px;
+
+  resize: none;
+  padding: 5px;
+  font-size: 1rem;
+  margin-right: 4px;
+  border-radius: 4px;
+}
+button {
+  font-size: 1.3rem;
+  padding: 10px 20px;
+  width: 100px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+button:hover {
+  background-color: #0056b3;
+}
+.message-write-section {
+  background-color: #0056b3;
+  padding: 4px 0 16px 0;
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: bottom;
+}
+.messages {
+  background-color: #f4f4f4;
+  border-radius: 16px 16px 0 0;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  border-radius: 8px;
+  background-color: #afd2f7;
+  padding: 8px;
+  margin: 8px;
+  max-width: 80%;
+  align-self: start;
+}
+.message.from-user {
+  align-self: end;
+  background-color: #e0e0e0;
+}
+
+.message p {
+  margin: 0;
+}
+
+.message-date {
+  text-align: end;
+  font-size: 0.8rem;
+}
+/* Login form styling */
+
+.login-form {
+  margin: 0 auto;
+  padding: 32px;
+  border-radius: 20px;
+  align-self: center;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+}
+.submit-button {
+  margin: 0 auto;
+}
+.login-form input {
+  font-size: 1rem;
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Messenger</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+  </head>
+  <body>
+    <div id="data-username" data-username="{{ username }}"></div>
+    <div class="sidebar">
+      <h2>{{ username }}</h2>
+      <div class="chat-list">
+        {% for user in active_users %}
+        <a href="#" , username="{{ user }}">{{ user }}</a>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="chat">
+      <div class="chat-header">
+        <h1
+          class="chat-name"
+          id="opponent_username"
+          opponent_username="{{ opponent_username }}"
+        >
+          {{ opponent_username }}
+        </h1>
+      </div>
+
+      <div class="chat-content">
+        <div class="messages">
+          {% for message in messages %}
+          <div
+            class="message {% if message.sender == username %}from-user{% endif %}"
+          >
+            {% set formatted_text = message.text.replace('\n', '<br />') %}
+            <p class="text">{{ formatted_text | safe }}</p>
+            <p class="message-date">{{ message.timestamp }}</p>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="message-write-section">
+          <textarea
+            id="message-input"
+            placeholder="Type your message here..."
+          ></textarea>
+          <button id="send-button">Send</button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</html>

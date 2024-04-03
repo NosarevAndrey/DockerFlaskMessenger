@@ -1,0 +1,9 @@
+services:
+  web: 
+    build:
+      context: FlaskServer
+      target: builder
+
+    stop_signal: SIGINT
+    ports:
+      - '3000:8080'
