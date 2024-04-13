@@ -38,17 +38,21 @@ body {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  gap: 8px;
   cursor: pointer;
   padding: 12px 8px;
 }
 .online-indicator {
-  padding-right: 8px;
+  padding: 0;
   margin: 0;
   font-size: 1rem;
-  color: gray;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background-color: gray;
 }
 .online {
-  color: greenyellow;
+  background-color: greenyellow;
 }
 
 .chat-list .user a {

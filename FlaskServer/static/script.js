@@ -58,14 +58,13 @@ document.addEventListener('DOMContentLoaded', function () {
             link.textContent = username;
             link.setAttribute('username', username);
            
-            var circle = document.createElement('p');
-            circle.textContent = '●';
+
+            var circle = document.createElement('div');
             circle.classList.add('online-indicator');
             if (isOnline) {
                 circle.classList.add('online');
             }
             
-
             userDiv.appendChild(circle);
             userDiv.appendChild(link);
 
