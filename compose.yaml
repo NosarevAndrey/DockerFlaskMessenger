@@ -1,3 +1,4 @@
+version: '1'
 services:
   web: 
     build:
@@ -7,3 +8,28 @@ services:
     stop_signal: SIGINT
     ports:
       - '3000:8080'
+  db:
+    build:
+        context: ./db
+        dockerfile: Dockerfile-pg
+    container_name: local_pgdb
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - local_pgdata:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  local_pgdata:
+  pgadmin-data:

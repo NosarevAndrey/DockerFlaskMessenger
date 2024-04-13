@@ -6,34 +6,61 @@ body {
   min-height: 100vh;
   background-color: #0056b3;
 }
-.sidebar {
-  width: 16%;
+.sidebar-container {
+  width: 200px;
   background-color: #f4f4f4;
   border-right: 3px solid rgb(0, 44, 139);
   padding: 0;
 }
-.sidebar h2 {
+.sidebar-container h2 {
   padding: 0 20px 0 20px;
   font-size: 1.4rem;
+}
+.sidebar {
+  position: sticky;
+  top: 0;
+}
+.username-display {
+  align-content: center;
+  height: 60px;
+  padding: 0;
+  margin: 0;
 }
 .chat-list {
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 60px);
+  overflow-y: scroll;
 }
-.chat-list a {
-  padding: 8px;
-  background-color: #afd2f7;
+
+.user {
+  background-color: #cad5df;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px 8px;
+}
+.online-indicator {
+  padding-right: 8px;
+  margin: 0;
+  font-size: 1rem;
+  color: gray;
+}
+.online {
+  color: greenyellow;
+}
+
+.chat-list .user a {
   color: black;
   text-decoration: none;
 }
-.chat-list a:nth-child(2n) {
-  padding: 8px;
-  background-color: #8ec0f5;
+.chat-list .user:nth-child(2n) {
+  background-color: #adbac7;
 }
-.chat-list .current {
+.chat-list .user.current {
   z-index: 1;
-  outline: rgb(165, 246, 255) solid 4px;
-  border-radius: 4px;
+  background-color: #8ec0f5;
 }
 .chat {
   width: 100%;
@@ -41,12 +68,16 @@ body {
   margin: 0;
 }
 .chat-header {
+  align-content: center;
+  height: 60px;
   background-color: rgb(0, 44, 139);
-  padding: 4px 16px;
+  padding: 0 16px;
   margin: 0;
+  position: sticky;
+  top: 0;
 }
 .chat-content {
-  padding: 16px;
+  padding: 16px 16px 0 16px;
   flex: 1;
 }
 .chat-name {
@@ -76,7 +107,7 @@ button {
   border-radius: 4px;
 }
 button:hover {
-  background-color: #0056b3;
+  background-color: #3f91ea;
 }
 .message-write-section {
   background-color: #0056b3;
@@ -92,9 +123,13 @@ button:hover {
   padding: 12px;
   display: flex;
   flex-direction: column;
+  min-height: 50vh;
+  max-width: calc(100vw - 200px);
 }
 
 .message {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   border-radius: 8px;
   background-color: #afd2f7;
   padding: 8px;

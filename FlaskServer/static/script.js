@@ -40,33 +40,55 @@ document.addEventListener('DOMContentLoaded', function () {
 
     socket.on('update_users', function (data) { 
         console.log("Called update_users")
-        var userList = data.users;
-        console.log(userList);
+        var userStatusList = data.user_status_list;
+        console.log(userStatusList);
         var chatList = document.querySelector('.chat-list');
         
         chatList.innerHTML = '';
         
-        userList.forEach(function(username) {
+        userStatusList.forEach(function (user) {
+            var username = user[0];
+            var isOnline = user[1];
+
+            var userDiv = document.createElement('div');
+            userDiv.classList.add('user');
+
             var link = document.createElement('a');
             link.setAttribute('href', '#');
             link.textContent = username;
             link.setAttribute('username', username);
-            chatList.appendChild(link);
-            if (link.getAttribute('username') === opponentUsername) {
-                link.classList.add('current');
+           
+            var circle = document.createElement('p');
+            circle.textContent = '●';
+            circle.classList.add('online-indicator');
+            if (isOnline) {
+                circle.classList.add('online');
             }
             
 
-            link.addEventListener('click', function(event) {
+            userDiv.appendChild(circle);
+            userDiv.appendChild(link);
+
+
+            chatList.appendChild(userDiv);
+
+            if (username === opponentUsername) {
+                userDiv.classList.add('current');
+            }
+            
+
+            userDiv.addEventListener('click', function(event) {
                 event.preventDefault(); // Prevent the default link behavior
                 
-            if (!link.classList.contains('current')) {
-                var opponentUsername = link.getAttribute('username'); // Get the opponent's username from the link
-                
-                // Send a request to the server to redirect to the new chat
-                window.location.href = '/chat/' + account_username + '/' + opponentUsername;
-            }
-        });
+                if (!userDiv.classList.contains('current')) {
+                    var opponentUsername = link.getAttribute('username'); // Get the opponent's username from the link
+                    
+                    // Send a request to the server to redirect to the new chat
+                    window.location.href = '/chat/' + account_username + '/' + opponentUsername;
+                }
+            });
+
+ 
         });
         
     });
@@ -95,14 +117,15 @@ document.addEventListener('DOMContentLoaded', function () {
         chatContent.appendChild(messageDiv);
 
         // Scroll to the bottom of the chat content
-        chatContent.scrollTop = chatContent.scrollHeight;
+//        chatContent.scrollTop = chatContent.scrollHeight;
+        window.scrollTo(0, document.body.scrollHeight);
         console.log("new message: "+ data.text)
     });
     
-
-    function sendMessage(message) {
-        socket.send(message);
-    }
+    window.addEventListener('beforeunload', function(event) {
+    // Perform actions before the page is unloaded (e.g., closing WebSocket connections)
+    socket.disconnect(); // Disconnect the WebSocket connection
+    });
 
     var sendButton = document.getElementById('send-button');
     var messageInput = document.getElementById('message-input');
@@ -120,13 +143,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function sendMessage() {
         var message = messageInput.value.trim();
         if (message == '') { return; }
+        message = message.replace(/<hr>/g, '&dot-line;');
+        message = message.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        message = message.replace(/&dot-line;/g, '<hr>');
         console.log(message);
         
-
-        var timestamp = formatTimestamp(new Date());
         var messageData = {
         text: message,
-        timestamp: timestamp,
         sender: account_username,
         receiver: opponentUsername
         };
@@ -136,13 +159,3 @@ document.addEventListener('DOMContentLoaded', function () {
         messageInput.value = '';
     }
 });
-
-function formatTimestamp(date) {
-    var year = date.getFullYear();
-    var month = (date.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if needed
-    var day = date.getDate().toString().padStart(2, '0'); // Add leading zero if needed
-    var hours = date.getHours().toString().padStart(2, '0'); // Add leading zero if needed
-    var minutes = date.getMinutes().toString().padStart(2, '0'); // Add leading zero if needed
-
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
-}

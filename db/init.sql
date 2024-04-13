@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS Users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password_data VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Messages (
+    id SERIAL PRIMARY KEY,
+    sender VARCHAR(100) NOT NULL,
+    receiver VARCHAR(100) NOT NULL,
+    text TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_sender FOREIGN KEY (sender) REFERENCES Users(username),
+    CONSTRAINT fk_receiver FOREIGN KEY (receiver) REFERENCES Users(username)
+);
