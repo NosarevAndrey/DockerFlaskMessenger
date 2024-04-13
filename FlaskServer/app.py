@@ -12,11 +12,8 @@ from database_handler import DatabaseHandler as dbh
 from utils import *
 
 
-users = {} #TODO: Delete
 user_sockets = {}
 active_users = set()
-
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'admin'
