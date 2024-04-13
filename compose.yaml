@@ -19,14 +19,13 @@ services:
     volumes:
       - local_pgdata:/var/lib/postgresql/data
   pgadmin:
-    image: dpage/pgadmin4
+    build:
+          context: ./pgAdmin
+          dockerfile: Dockerfile-pgAdmin
     container_name: pgadmin4_container
     restart: always
     ports:
       - "8080:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
