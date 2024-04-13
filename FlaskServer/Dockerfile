@@ -1,12 +1,12 @@
 #syntax=docker/dockerfile:1.4
 FROM python:3.10-alpine AS builder
 
-WORKDIR /code
+WORKDIR /app
 
-COPY requirements.txt /code
+COPY requirements.txt /app
 RUN pip3 install -r requirements.txt
 
-COPY . /code
+COPY . /app
 
 EXPOSE 8080
 

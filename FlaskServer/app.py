@@ -1,30 +1,20 @@
 import datetime
-import os
-import psycopg2
-from flask import Flask, jsonify,  request, redirect, url_for, render_template, session
-from flask_socketio import SocketIO, send, emit, disconnect
+from flask import Flask,  request, redirect, url_for, render_template, session
+from flask_socketio import SocketIO, emit, disconnect
 from datetime import datetime
-from flask_cors import CORS
+#from flask_cors import CORS
 
 # from gevent.pywsgi import WSGIServer
 # import hashlib
 
 #my libs
-from message_store import MessageStore
 from database_handler import DatabaseHandler as dbh
-from database_handler import DbhResponse
 from utils import *
 
 
 users = {} #TODO: Delete
 user_sockets = {}
 active_users = set()
-
-message_storage = MessageStore()
-message_storage.add_message('User1', 'User2', {'text': 'Hello!', 'timestamp': '2024-04-05 12:00:00', 'sender': 'User1'})
-message_storage.add_message('User1', 'User1', {'text': 'Hello me!', 'timestamp': '2024-04-05 12:00:00', 'sender': 'User1'})
-message_storage.add_message('User2', 'User1', {'text': 'Hi there!', 'timestamp': '2024-04-05 12:01:00', 'sender': 'User2'})
-
 
 
 
@@ -74,11 +64,6 @@ def handle_message(data):
     response = dbh().store_message(sender, receiver, text, timestamp)
     if not response.valid():
         return
-
-    message_storage.add_message(sender, receiver, {
-        'text': text,
-        'timestamp': format_timestamp(timestamp),
-        'sender': sender})
 
     sender_sid = user_sockets.get(sender)
     receiver_sid = user_sockets.get(receiver)
@@ -142,9 +127,8 @@ def login():
 
 @app.route('/chat/<username>/<opponent_username>')
 def chat_list(username, opponent_username):
-    messages = message_storage.get_messages(username, opponent_username)
     messages_response = dbh().get_chat_messages(username, opponent_username)
-    
+
     if not messages_response.valid():
         return render_template('chat_list.html',
                                username=username,
