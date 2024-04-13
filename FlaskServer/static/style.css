@@ -57,9 +57,11 @@ hr {
   height: 0.6rem;
   border-radius: 50%;
   background-color: gray;
+  outline: 1px solid black;
 }
-.online {
-  background-color: greenyellow;
+.online-indicator.online {
+  background-color: lightgreen;
+  outline: 1px solid green;
 }
 
 .chat-list .user a {
