@@ -1,3 +1,4 @@
+@DeprecationWarning
 class MessageStore:
     def __init__(self):
         self.messages = {}
