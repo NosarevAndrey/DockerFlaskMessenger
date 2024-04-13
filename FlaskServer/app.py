@@ -142,14 +142,12 @@ def chat_list(username, opponent_username):
         return render_template('chat_list.html',
                                username=username,
                                opponent_username=opponent_username,
-                               active_users=active_users,
                                messages={},
                                error="Failed to load messages")
 
     return render_template('chat_list.html',
                            username=username,
                            opponent_username=opponent_username,
-                           active_users=active_users,
                            messages=messages_response.data)
 
 if __name__ == '__main__':
