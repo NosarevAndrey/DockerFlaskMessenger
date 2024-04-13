@@ -6,6 +6,13 @@ body {
   min-height: 100vh;
   background-color: #0056b3;
 }
+
+hr {
+  background-color: black;
+  border: 0;
+  height: 1px;
+}
+
 .sidebar-container {
   width: 200px;
   background-color: #f4f4f4;
