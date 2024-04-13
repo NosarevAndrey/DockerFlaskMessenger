@@ -41,13 +41,20 @@ def handle_connect():
         disconnect()
         return
 
+    all_response = dbh().get_all_users()
+
+    if not all_response.valid():
+        print(f"Connection with database failed: {username}")
+        disconnect()
+        return
+
     active_users.add(username)
     # Store the username and its corresponding socket in the dictionary
     user_sockets[username] = request.sid
     print(user_sockets[username])
     print(f"Socket connected for user: {username}")
 
-    sorted_users = merge_and_sort(set(active_users), users.keys())
+    sorted_users = merge_and_sort(set(active_users), set(all_response.data))
     user_status_list = [(username, (username in active_users)) for username in sorted_users]
     emit('update_users', {'user_status_list': user_status_list}, broadcast=True)
 
@@ -77,14 +84,19 @@ def handle_message(data):
 @socketio.on('disconnect')
 def handle_disconnect():
     # Remove the username and its corresponding socket from the dictionary upon disconnection
+    all_response = dbh().get_all_users()
+
+    if not all_response.valid():
+        print(f"Connection with database failed")
+        return
+
     for username, sid in user_sockets.items():
         if sid == request.sid:
             del user_sockets[username]
             print(f"Socket disconnected for user: {username}")
             active_users.remove(username)
 
-
-            sorted_users = merge_and_sort(set(active_users), users.keys())
+            sorted_users = merge_and_sort(set(active_users), set(all_response.data))
             user_status_list = [(username, (username in active_users)) for username in sorted_users]
             emit('update_users', {'user_status_list': user_status_list}, broadcast=True)
             break
