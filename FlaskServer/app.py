@@ -1,4 +1,5 @@
 import datetime
+import os
 from flask import Flask,  request, redirect, url_for, render_template, session
 from flask_socketio import SocketIO, emit, disconnect
 from datetime import datetime
@@ -8,12 +9,13 @@ from datetime import datetime
 # import hashlib
 
 #my libs
-from database_handler import DatabaseHandler as dbh
+from database_handler import DatabaseHandler
 from utils import *
 
 
 user_sockets = {}
 active_users = set()
+dbh = None
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'admin'
@@ -28,7 +30,7 @@ def handle_connect():
     if not username:
         return
 
-    get_response = dbh().get_user(username)
+    get_response = dbh.get_user(username)
 
     if not get_response.valid():
         return
@@ -38,7 +40,7 @@ def handle_connect():
         disconnect()
         return
 
-    all_response = dbh().get_all_users()
+    all_response = dbh.get_all_users()
 
     if not all_response.valid():
         print(f"Connection with database failed: {username}")
@@ -65,7 +67,7 @@ def handle_message(data):
     text = data['text']
 
     timestamp = datetime.now()
-    response = dbh().store_message(sender, receiver, text, timestamp)
+    response = dbh.store_message(sender, receiver, text, timestamp)
     if not response.valid():
         return
 
@@ -81,7 +83,7 @@ def handle_message(data):
 @socketio.on('disconnect')
 def handle_disconnect():
     # Remove the username and its corresponding socket from the dictionary upon disconnection
-    all_response = dbh().get_all_users()
+    all_response = dbh.get_all_users()
 
     if not all_response.valid():
         print(f"Connection with database failed")
@@ -118,7 +120,7 @@ def login():
     if username.strip() == '' or password.strip() == '':
         return render_template('login.html', error="Invalid username or password.")
 
-    get_response = dbh().get_user(username)
+    get_response = dbh.get_user(username)
 
     if not get_response.valid():
         return render_template('login.html', error="Failed to add user. Please try again later.")
@@ -127,7 +129,7 @@ def login():
         if password != get_response.data[1]:
             return render_template('login.html', error="Invalid username or password.")
     else:
-        add_response = dbh().add_user(username, password)
+        add_response = dbh.add_user(username, password)
         if not add_response.valid():
             return render_template('login.html', error="Failed to add user. Please try again later.")
 
@@ -136,7 +138,7 @@ def login():
 
 @app.route('/chat/<username>/<opponent_username>')
 def chat_list(username, opponent_username):
-    messages_response = dbh().get_chat_messages(username, opponent_username)
+    messages_response = dbh.get_chat_messages(username, opponent_username)
 
     if not messages_response.valid():
         return render_template('chat_list.html',
@@ -151,6 +153,10 @@ def chat_list(username, opponent_username):
                            messages=messages_response.data)
 
 if __name__ == '__main__':
+    username = os.getenv("USERNAME", "admin")
+    password = os.getenv("PASSWORD", "admin")
+    dbh = DatabaseHandler(user=username, password=password)
+    
     socketio.run(app, host='0.0.0.0', port=8080,  allow_unsafe_werkzeug=True, debug=True)
 
 

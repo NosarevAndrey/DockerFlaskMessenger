@@ -15,23 +15,23 @@ class DbhResponse:
         return self.code == 1
 
 class DatabaseHandler:
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance._connection = None
-        return cls._instance
+    def __init__(self, dbname='ChatAppDB', user='admin', password='admin', host='db', port='5432'):
+        self.dbname = dbname
+        self.user = user
+        self.password = password
+        self.host = host
+        self.port = port
+        self._connection = None
 
     def connect(self):
         if self._connection is None:
-            # Connect to the PostgreSQL database
+            # Connect to the PostgreSQL database with custom parameters
             self._connection = psycopg2.connect(
-                dbname='ChatAppDB',
-                user='admin',
-                password='admin',
-                host='db',
-                port='5432'
+                dbname=self.dbname,
+                user=self.user,
+                password=self.password,
+                host=self.host,
+                port=self.port
             )
 
     def disconnect(self):
