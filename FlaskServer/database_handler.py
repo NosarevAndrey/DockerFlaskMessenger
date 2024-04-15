@@ -15,7 +15,8 @@ class DbhResponse:
         return self.code == 1
 
 class DatabaseHandler:
-    def __init__(self, dbname='ChatAppDB', user='admin', password='admin', host='db', port='5432'):
+    def __init__(self, app_logger, dbname='ChatAppDB', user='admin', password='admin', host='db', port='5432'):
+        self.app_logger = app_logger
         self.dbname = dbname
         self.user = user
         self.password = password
@@ -44,14 +45,15 @@ class DatabaseHandler:
         @wraps(func)
         def wrapper(self, *args, **kwargs) -> DbhResponse:
             try:
+                self.app_logger.info("Call db")
                 self.connect()  # Connect before executing the function
                 result = func(self, *args, **kwargs)
                 return DbhResponse(1, result)
             except psycopg2.Error as e:
-                print("Database connection error:", e.pgcode)
+                self.app_logger.info("Database connection error:", e.pgcode)
                 return DbhResponse(0, None)
             except ValueError as ve:
-                print("ValueError occurred:", ve)
+                self.app_logger.info("ValueError occurred:", ve)
                 return DbhResponse(-1, None)
             finally:
                 self.disconnect()  # Disconnect after executing the function

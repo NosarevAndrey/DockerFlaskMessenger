@@ -3,6 +3,7 @@ import os
 from flask import Flask,  request, redirect, url_for, render_template, session
 from flask_socketio import SocketIO, emit, disconnect
 from datetime import datetime
+import logging
 #from flask_cors import CORS
 
 # from gevent.pywsgi import WSGIServer
@@ -36,32 +37,31 @@ def handle_connect():
         return
 
     if not get_response.data:
-        print(f"Connection denied for unknown user: {username}")
+        app.logger.info(f"Connection denied for unknown user: {username}")
         disconnect()
         return
 
     all_response = dbh.get_all_users()
 
     if not all_response.valid():
-        print(f"Connection with database failed: {username}")
+        app.logger.info(f"Connection with database failed: {username}")
         disconnect()
         return
 
     active_users.add(username)
     # Store the username and its corresponding socket in the dictionary
     user_sockets[username] = request.sid
-    print(user_sockets[username])
-    print(f"Socket connected for user: {username}")
+    app.logger.info(user_sockets[username])
+    app.logger.info(f"Socket connected for user: {username}")
 
     sorted_users = merge_and_sort(set(active_users), set(all_response.data))
     user_status_list = [(username, (username in active_users)) for username in sorted_users]
     emit('update_users', {'user_status_list': user_status_list}, broadcast=True)
 
 
-
 @socketio.on('message')
 def handle_message(data):
-    print('Received message:', data)
+    app.logger.info('Received message:', data)
     sender = data['sender']
     receiver = data['receiver']
     text = data['text']
@@ -86,13 +86,13 @@ def handle_disconnect():
     all_response = dbh.get_all_users()
 
     if not all_response.valid():
-        print(f"Connection with database failed")
+        app.logger.info(f"Connection with database failed")
         return
 
     for username, sid in user_sockets.items():
         if sid == request.sid:
             del user_sockets[username]
-            print(f"Socket disconnected for user: {username}")
+            app.logger.info(f"Socket disconnected for user: {username}")
             active_users.remove(username)
 
             sorted_users = merge_and_sort(set(active_users), set(all_response.data))
@@ -155,8 +155,7 @@ def chat_list(username, opponent_username):
 if __name__ == '__main__':
     username = os.getenv("USERNAME", "admin")
     password = os.getenv("PASSWORD", "admin")
-    dbh = DatabaseHandler(user=username, password=password)
-    
+    dbh = DatabaseHandler(app.logger, user=username, password=password)
     socketio.run(app, host='0.0.0.0', port=8080,  allow_unsafe_werkzeug=True, debug=True)
 
 
