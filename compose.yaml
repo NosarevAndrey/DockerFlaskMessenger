@@ -1,20 +1,20 @@
-version: '1'
+version: "1"
 
 services:
-  web: 
-    build:
-      context: FlaskServer
-      target: builder
+  web:
+    image: nosarevandrey/flask-web-application:latest
     environment:
       - USERNAME=admin
       - PASSWORD=admin
+      - HOST=db
+      - DBNAME=ChatAppDB
     stop_signal: SIGINT
     ports:
-      - '3000:8080'
+      - "3000:8080"
   db:
     build:
-        context: ./db
-        dockerfile: Dockerfile-pg
+      context: ./db
+      dockerfile: Dockerfile-pg
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
@@ -26,8 +26,8 @@ services:
       - local_pgdata:/var/lib/postgresql/data
   pgadmin:
     build:
-          context: ./pgAdmin
-          dockerfile: Dockerfile-pgAdmin
+      context: ./pgAdmin
+      dockerfile: Dockerfile-pgAdmin
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@example.com
       - PGADMIN_DEFAULT_PASSWORD=admin

@@ -13,6 +13,7 @@ import logging
 from database_handler import DatabaseHandler
 from utils import *
 
+#Version 2.0
 
 user_sockets = {}
 active_users = set()
@@ -155,7 +156,10 @@ def chat_list(username, opponent_username):
 if __name__ == '__main__':
     username = os.getenv("USERNAME", "admin")
     password = os.getenv("PASSWORD", "admin")
-    dbh = DatabaseHandler(app.logger, user=username, password=password)
+    host = os.getenv("HOST", "postgres-db")
+    dbname = os.getenv("DBNAME", "postgres-db")
+    dbh = DatabaseHandler(app.logger,  dbname=dbname, user=username, password=password, host=host)
+    dbh.init_tables()
     socketio.run(app, host='0.0.0.0', port=8080,  allow_unsafe_werkzeug=True, debug=True)
 
 

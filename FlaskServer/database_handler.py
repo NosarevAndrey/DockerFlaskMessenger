@@ -61,6 +61,35 @@ class DatabaseHandler:
         return wrapper
 
     @decorator_connection
+    def init_tables(self):
+        # SQL statements for creating tables
+        create_users_table_sql = """
+            CREATE TABLE IF NOT EXISTS Users (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(100) UNIQUE NOT NULL,
+                password_data VARCHAR(100) NOT NULL
+            );
+        """
+
+        create_messages_table_sql = """
+            CREATE TABLE IF NOT EXISTS Messages (
+                id SERIAL PRIMARY KEY,
+                sender VARCHAR(100) NOT NULL,
+                receiver VARCHAR(100) NOT NULL,
+                text TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                CONSTRAINT fk_sender FOREIGN KEY (sender) REFERENCES Users(username),
+                CONSTRAINT fk_receiver FOREIGN KEY (receiver) REFERENCES Users(username)
+            );
+        """
+        with self._connection.cursor() as cur:
+            cur.execute(create_users_table_sql)
+            cur.execute(create_messages_table_sql)
+            self._connection.commit()
+            return True
+
+
+    @decorator_connection
     def get_all_users(self):
         with self._connection.cursor() as cur:
             cur.execute("SELECT username FROM Users")
